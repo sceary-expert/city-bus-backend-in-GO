@@ -14,19 +14,16 @@ import (
 func AddBusRoute(rw http.ResponseWriter, r *http.Request) {
 	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	var newRouteRequstBody models.NewRouteRequstBody
-	if err := json.NewDecoder(r.Body).Decode(&newRouteRequstBody); err != nil {
+	var newRouteRequestBody models.NewRouteRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&newRouteRequestBody); err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
 		response := responses.UserResponse{Status: http.StatusBadRequest, Message: "error : request body should contain every field", Data: map[string]interface{}{"data": err.Error()}}
 		json.NewEncoder(rw).Encode(response)
 		return
 	}
-	startingPointName := newRouteRequstBody.StartingPointName
-
+	startingPointName := newRouteRequestBody.StartingPointName
 	var stoppage models.Stoppage
-
 	//find starting point
-
 	stoppage, err := helpers.GetStoppage(startingPointName)
 	fmt.Println("stoppage result from get stoppage ", stoppage)
 	if err != nil {
@@ -39,14 +36,13 @@ func AddBusRoute(rw http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(rw).Encode(response)
 			return
 		}
-
 	}
 	fmt.Println("stoppage result after creating a new stoppage ", stoppage)
 	var newDestination models.BusPreview
-	newDestination.BusName = newRouteRequstBody.BusName
-	newDestination.Duration = newRouteRequstBody.Duration
-	newDestination.EndingPointName = newRouteRequstBody.EndingPointName
-	newDestination.TicketPrice = newRouteRequstBody.TicketPrice
+	newDestination.BusName = newRouteRequestBody.BusName
+	newDestination.Duration = newRouteRequestBody.Duration
+	newDestination.EndingPointName = newRouteRequestBody.EndingPointName
+	newDestination.TicketPrice = newRouteRequestBody.TicketPrice
 	destinationList := stoppage.Destination
 	destinationList = append(destinationList, newDestination)
 	stoppage.Destination = destinationList
@@ -61,5 +57,4 @@ func AddBusRoute(rw http.ResponseWriter, r *http.Request) {
 	response := responses.UserResponse{Status: http.StatusBadRequest, Message: "error : request body should contain every field", Data: map[string]interface{}{"data": newDestination}}
 	json.NewEncoder(rw).Encode(response)
 	return
-
 }

@@ -2,7 +2,7 @@ package models
 
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
-type NewRouteRequstBody struct {
+type NewRouteRequestBody struct {
 	Id                primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	EndingPointName   string             `json:"ending-point-name"`
 	StartingPointName string             `json:"starting-point-name"`
